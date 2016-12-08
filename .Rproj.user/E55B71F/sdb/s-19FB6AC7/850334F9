@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "Package: HBLCommuteTrafficData\nType: Package\nTitle: Package containing R functions for HBL Commute Traffic Data\nVersion: 0.1.0\nAuthor: Lotta Holm, Olli-Pekka Huovilainen, Liina Korhonen, Sami Kallinen\nMaintainer: Lotta Holm <lotta.holm@ksfmedia.fi>\nDescription: Functions for serving the HBL Commute app with waiting times for\n    next busses.\nLicense: GPL-3\nDepends: dplyr\nImports: gmt\nLazyData: TRUE\nRoxygenNote: 5.0.1\n",
+    "created" : 1481210103959.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2962579835",
+    "id" : "850334F9",
+    "lastKnownWriteTime" : 1481213344,
+    "last_content_update" : 1481213344478,
+    "path" : "~/r-scripts/HBLCommuteTrafficData/DESCRIPTION",
+    "project_path" : "DESCRIPTION",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "dcf"
+}
