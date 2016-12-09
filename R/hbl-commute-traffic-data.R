@@ -7,10 +7,10 @@ library(dplyr)
 
 #' Data for every Buss, Train, Tram and Ferry Service
 #'
-#' Bla bla bla bla
-#' Bla bla bla bla
-#' Bla bla bla bla
-#' Bla bla bla bla
+#' Contains data on each service (i.e. individual departures). For each service the following variables
+#' are provided: serviceId containing an identifier id, line indicating which line the service operates,
+#' footnoteId used to map the correct schedule to the service and direction indicating the direction
+#' of the service.
 #'
 #' @docType data
 #'
@@ -27,12 +27,12 @@ library(dplyr)
 #' data(services)
 #' lines <- services$line
 
-#' Schedule Data for every Buss, Train, Tram and Ferry Stop
+#' Timetable Data for every Buss, Train, Tram and Ferry Stop
 #'
-#' Bla bla bla bla
-#' Bla bla bla bla
-#' Bla bla bla bla
-#' Bla bla bla bla
+#' Contains timetable data for the different stops. The variables provided are: serviceID, an identifier id
+#' for each service (i.e. individual departure). The variable stationIndex, a unique index for each stop that can be
+#' used for mapping the stop schedule to the stops' geographical location. The variable arrival indicating the
+#' time when the service is expected to arrive at the stop. The variable stopNr is another unique identifier for the stop.
 #'
 #' @docType data
 #'
@@ -51,10 +51,10 @@ library(dplyr)
 
 #' Location and Name Data for every Buss, Train, Tram and Ferry Stations
 #'
-#' Bla bla bla bla
-#' Bla bla bla bla
-#' Bla bla bla bla
-#' Bla bla bla bla
+#' Contains geographical locations for the different stops. The variables provided are: stationId, an identifier id
+#' for the stops. The vaiable stationLon prodiving the longitudinal data (in GWS84) for the stop. The vaiable
+#' stationLat prodiving the latitudinal data (in GWS84) for the stop. The variable name providing the name for the
+#' stop.
 #'
 #' @docType data
 #'
@@ -73,10 +73,9 @@ library(dplyr)
 
 #' Data For Mapping Services to Dates
 #'
-#' Bla bla bla bla
-#' Bla bla bla bla
-#' Bla bla bla bla
-#' Bla bla bla bla
+#' Contains data for mapping services (i.e. individual departures) to dates. The variables provided are:
+#' footnoteId for mapping the correct schedule to each service. The variable date identifying which dates
+#' a certain service is scheduled for.
 #'
 #' @docType data
 #'
@@ -119,10 +118,10 @@ get_closest_stops <- function(lon, lat, n=5) {
 }
 
 
-# ## Function that returns the n next departures from the selected stop, n=5 as default
+# ## Function that returns the n next departures from the selected stop, n=50 as default
 #
 
-get_next_depts <- function(stId = 2214206, time, n=5) {
+get_next_depts <- function(stId = 2214206, time, n=50) {
   data(stops) # stops <- get_stops()
   data(services) # services <- get_services()
   data(footnotes) # footnotes <- get_services()
@@ -132,13 +131,13 @@ get_next_depts <- function(stId = 2214206, time, n=5) {
     left_join(services,by="serviceId") %>%
     left_join(footnotes, by="footnoteId") %>%
     filter(as.POSIXct(date)==format(time,"%Y-%m-%d")) %>%
-    mutate(date_arrival =
+    mutate(dateArrival =
                     as.POSIXct(paste(format(time,"%Y-%m-%d"),
                                      sprintf("%04d",
                                              as.integer(sub("^24","00",
                                                             arrival)))),
                                format="%Y-%m-%d %H%M"),
-           time_diff=date_arrival-time) %>%
+           time_diff=dateArrival-time) %>%
     filter(time_diff > 0) %>%
     top_n(n,-time_diff)
 
@@ -167,7 +166,9 @@ get_buses <- function(lon = 24.77770,
   closest_stops <- get_closest_stops(lon,lat)
 
   depts <- get_next_depts(closest_stops$stationIndex[1], time)
-
-  return(depts)
-
+  depts <- select(depts, stationIndex, line, dateArrival)
+  depts$dateArrival <- as.integer(depts$dateArrival)
+  return(jsonlite::toJSON(depts))
 }
+
+
